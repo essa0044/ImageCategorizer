@@ -156,7 +156,7 @@ function App() {
             console.warn("Could not get Konva stage from drop target");
             return;
         }
-        const stage = elementRef.current
+        const stage = elementRef.current.getStage();
         const pos = stage.getPointerPosition();
 
         if (pos) {
