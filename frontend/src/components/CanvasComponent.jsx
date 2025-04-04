@@ -14,7 +14,7 @@ const CanvasRectangle = ({ shapeProps, isSelected, onSelect, onChange, categoryC
 
     useEffect(() => {
         if (isSelected && trRef.current) {
-            // We need to attach transformer manually
+            // Attach transformer manually
             trRef.current.nodes([shapeRef.current]);
             trRef.current.getLayer().batchDraw();
         }
@@ -23,44 +23,52 @@ const CanvasRectangle = ({ shapeProps, isSelected, onSelect, onChange, categoryC
     return (
         <React.Fragment>
             <Rect
-                onClick={onSelect}
-                onTap={onSelect}
+                onClick={() => {
+                    onSelect();
+                    console.log(`📍 Selected Rectangle: ${shapeProps.id}, X: ${shapeProps.x}, Y: ${shapeProps.y}, Width: ${shapeProps.width}, Height: ${shapeProps.height}`);
+                }}
+                onTap={() => {
+                    onSelect();
+                    console.log(`📍 Selected Rectangle: ${shapeProps.id}, X: ${shapeProps.x}, Y: ${shapeProps.y}, Width: ${shapeProps.width}, Height: ${shapeProps.height}`);
+                }}
                 ref={shapeRef}
                 {...shapeProps}
-                fill={categoryColor} // Use category color
-                opacity={0.6} // Make it slightly transparent
+                fill={categoryColor}
+                opacity={0.6} 
                 draggable
                 onDragEnd={(e) => {
-                    onChange({
+                    const updatedShape = {
                         ...shapeProps,
                         x: e.target.x(),
                         y: e.target.y(),
-                    });
+                    };
+                    onChange(updatedShape);
+                    console.log(`Moved Rectangle: ${updatedShape.id}, X: ${updatedShape.x}, Y: ${updatedShape.y}`);
                 }}
                 onTransformEnd={(e) => {
-                    // Transformer is changing scale and position, need to update width/height
                     const node = shapeRef.current;
                     const scaleX = node.scaleX();
                     const scaleY = node.scaleY();
 
-                    // Reset scale to avoid compounding transforms
+                    // Reset scale
                     node.scaleX(1);
                     node.scaleY(1);
-                    onChange({
+
+                    const updatedShape = {
                         ...shapeProps,
                         x: node.x(),
                         y: node.y(),
-                        // Prevent negative width/height
                         width: Math.max(5, node.width() * scaleX),
                         height: Math.max(5, node.height() * scaleY),
-                    });
+                    };
+                    onChange(updatedShape);
+                    console.log(`Resized Rectangle: ${updatedShape.id}, X: ${updatedShape.x}, Y: ${updatedShape.y}, Width: ${updatedShape.width}, Height: ${updatedShape.height}`);
                 }}
             />
             {isSelected && (
                 <Transformer
                     ref={trRef}
                     boundBoxFunc={(oldBox, newBox) => {
-                        // Limit resize minimum size
                         if (newBox.width < 5 || newBox.height < 5) {
                             return oldBox;
                         }
@@ -73,34 +81,23 @@ const CanvasRectangle = ({ shapeProps, isSelected, onSelect, onChange, categoryC
 };
 
 const CanvasComponent = ({ imageSrc, rectangles, selectedRectId, onRectSelect, onRectChange, categories, stageRef }) => {
-    const [image] = useImage(imageSrc, 'Anonymous'); // 'Anonymous' for CORS if image is on different domain
-    // const stageRef = useRef(null);
-    const [stageSize, setStageSize] = useState({ width: 800, height: 600}); // Default or calculated size
+    const [image] = useImage(imageSrc, 'Anonymous');
+    const [stageSize, setStageSize] = useState({ width: 800, height: 600 });
 
-    // Adjust stage size based on container or image size
     useEffect(() => {
-         // TODO: Better dynamic sizing based on parent container
-         // const container = document.querySelector('.canvas-panel'); // Or pass ref
-         // if (container) {
-         //    setStageSize({ width: container.offsetWidth, height: container.offsetHeight });
-         // }
-         if (image) {
-            // Option: Fit stage to image, potentially scaled
-            const maxWidth = 800; // Max width for the canvas area
+        if (image) {
+            const maxWidth = 800;
             const scale = Math.min(1, maxWidth / image.width);
             setStageSize({ width: image.width * scale, height: image.height * scale });
-         }
+        }
     }, [image]);
 
-
     const checkDeselect = (e) => {
-        // Deselect when clicking on empty area (stage or image)
         const clickedOnEmpty = e.target === e.target.getStage() || e.target.hasName('backgroundImage');
         if (clickedOnEmpty) {
             onRectSelect(null);
         }
     };
-
 
     return (
         <div style={{ border: '1px solid #ccc', width: '100%', height: '70vh', overflow: 'auto' }}>
@@ -117,7 +114,7 @@ const CanvasComponent = ({ imageSrc, rectangles, selectedRectId, onRectSelect, o
                             image={image}
                             width={stageSize.width}
                             height={stageSize.height}
-                            name="backgroundImage" // Name for deselection logic
+                            name="backgroundImage"
                         />
                     )}
                     {rectangles.map((rect) => (
