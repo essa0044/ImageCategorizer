@@ -27,7 +27,7 @@ function App() {
     // Trigger Auto-Classify when image is loaded AND the flag was set
     useEffect(() => {
       if (uploadedImage && classifyOnUploadFlag) {
-          handleAutoClassify(uploadedImage);
+        //   handleAutoClassify(uploadedImage);
           setClassifyOnUploadFlag(false); // Reset flag after triggering
       }
   }, [uploadedImage, classifyOnUploadFlag]); // dependecies: image and flag
@@ -60,7 +60,7 @@ function App() {
           setIsLoading(false);
           setClassifyOnUploadFlag(false); // Reset flag on error
       });
-  }, [handleAutoClassify]); // handleAutoClassify as dependency to ensure it's up-to-date
+  }, []); // handleAutoClassify as dependency to ensure it's up-to-date
 
 
   const handleAutoClassify = useCallback((imageUrlToClassify) => {

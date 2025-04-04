@@ -49,7 +49,7 @@ def get_categories():
     try:
         with conn.cursor() as cur:
             # pull category-category here if needed later on
-            cur.execute("SELECT id, name, color FROM category ORDER BY name;")
+            cur.execute("SELECT id, name, color FROM public.category ORDER BY name;")
             rows = cur.fetchall()
             for row in rows:
                 categories.append({"id": row[0], "name": row[1], "color": row[2]})
