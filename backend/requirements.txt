@@ -3,4 +3,5 @@ flask
 python-dotenv
 PyMuPDF  # for pdf to image
 psycopg2-binary # for PostgreSQL connection
-# later: Pillow (for images), SQLAlchemy (for db),  etc.
+Pillow>=9.0.0 # for images
+# later maybe SQLAlchemy (for db)
