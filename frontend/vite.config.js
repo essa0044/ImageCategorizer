@@ -9,11 +9,12 @@ export default defineConfig({
     tailwindcss(),
   ],
   server: {
+    host: true,
     port: 3000, // Optional: Define dev server port
     proxy: {
       // Proxy /api requests to the backend server
       '/api': {
-        target: 'http://localhost:5001', // Backend-Server (as in Flask or Docker Compose)
+        target: 'http://exam-backend:5001', // Backend-Server (as in Flask or Docker Compose)
         changeOrigin: true, // Needed for virtual hosted sites
         // secure: false, // if Backend has no HTTPS
         // rewrite: (path) => path.replace(/^\/api/, '') // Optional: rewrite path if needed
