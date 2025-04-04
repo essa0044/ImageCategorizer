@@ -1,0 +1,6 @@
+# backend/requirements.txt
+Flask>=2.0
+python-dotenv>=0.15
+PyMuPDF>=1.20.0  # for pdf to image
+psycopg2-binary>=2.9.0 # for PostgreSQL connection
+# later: Pillow (for images), SQLAlchemy (for db),  etc.

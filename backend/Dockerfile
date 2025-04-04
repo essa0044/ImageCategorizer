@@ -4,7 +4,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     # add any other dependencies you need here
     # e.g. poppler-utils for pdf2image
     && rm -rf /var/lib/apt/lists/*
-COPY venv/requirements.txt ./requirements.txt
+COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 # create a folder for Uploads
