@@ -4,7 +4,7 @@ services:
     build: ./frontend
     container_name: exam-frontend
     ports:
-      - "3000:80" # Map Host Port 3000 to Container Port 80 (Nginx default)
+      - "3000:3000" # removed nginx
     restart: unless-stopped
     depends_on:
       - backend # wait till backend is ready
