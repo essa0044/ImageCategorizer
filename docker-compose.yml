@@ -7,7 +7,7 @@ services:
       - "3000:80" # Map Host Port 3000 to Container Port 80 (Nginx default)
     restart: unless-stopped
     depends_on:
-      - backend # Wartet, bis Backend gestartet ist (optional, aber gut)
+      - backend # wait till backend is ready
     networks:
       - exam-network
 
@@ -21,14 +21,13 @@ services:
       # Optional: Mount Upload-Verzeichnis, wenn Dateien persistiert werden sollen
       # - ./uploads:/app/uploads
     environment:
-      # Umgebungsvariablen für Python (z.B. DB-Verbindung)
-      # Können auch aus einer .env-Datei im Backend-Ordner geladen werden
+      # environment variables can be loaded from .env file later
       FLASK_APP: app.py
-      FLASK_DEBUG: 1 # Im Development
+      FLASK_DEBUG: 1 # for development
       # DATABASE_URL: postgresql://user:password@db:5432/examdb
     restart: unless-stopped
     depends_on:
-      - db # Backend startet erst, wenn DB bereit ist
+      - db # Backend starts after DB is ready
     networks:
       - exam-network
 
@@ -37,13 +36,13 @@ services:
     container_name: exam-db
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-      - ./db_init:/docker-entrypoint-initdb.d # Für Initialisierungs-SQL-Skripte
+      - ./db_init:/docker-entrypoint-initdb.d # for initial SQL scripts
     environment:
       POSTGRES_DB: examdb
       POSTGRES_USER: user
-      POSTGRES_PASSWORD: password # Sicherere Methode für Passwörter verwenden! (Secrets)
+      POSTGRES_PASSWORD: password # use secure method later
     ports:
-      - "5432:5432" # Nur für Debugging/externen Zugriff freigeben, sonst nicht nötig
+      - "5432:5432" # for debugging/external access
     restart: unless-stopped
     networks:
       - exam-network
@@ -53,4 +52,4 @@ networks:
     driver: bridge
 
 volumes:
-  postgres_data: # Named volume für persistente DB-Daten
+  postgres_data: # named volumen for PostgreSQL data
