@@ -8,7 +8,7 @@ COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 # create a folder for Uploads
-RUN mkdir uploads
+RUN mkdir /uploads
 EXPOSE 5001
 CMD ["flask", "run", "--host=0.0.0.0", "--port=5001"]
 # for production: CMD ["gunicorn", "-w 4", "-b 0.0.0.0:5001", "app:app"]
