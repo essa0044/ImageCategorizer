@@ -24,9 +24,9 @@ services:
       # environment variables can be loaded from .env file later
       FLASK_APP: app.py
       FLASK_DEBUG: 1 # for development
-      POSTGRES_DB: examdb
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
       # DATABASE_URL: postgresql://user:password@db:5432/examdb
     restart: unless-stopped
     depends_on:
@@ -41,9 +41,9 @@ services:
       - postgres_data:/var/lib/postgresql/data/
       - ./db_init:/docker-entrypoint-initdb.d # for initial SQL scripts
     environment:
-      POSTGRES_DB: examdb
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password # use secure method later
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD} # use secure method later
     ports:
       - "5432:5432" # for debugging/external access
     restart: unless-stopped

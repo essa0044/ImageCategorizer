@@ -146,6 +146,7 @@ def auto_classify():
 @app.route('/api/submit', methods=['POST'])
 def submit_classification():
     # TODO: Implement database saving logic here
+    # We have to get the coordinates from frontend  
     data = request.json
     logging.info("Received submission data:")
     logging.info(data)
@@ -155,6 +156,6 @@ def submit_classification():
 if __name__ == '__main__':
     # Load environment variables for DB from .env (Flask does this partly automatically)
     db_host = os.getenv('DB_HOST')
-    db_name = os.getenv('POSTGRES_DB')
+    db_name = os.getenv('DB_NAME')
     logging.info(f"Backend starting. Attempting to connect to DB: {db_name} on host {db_host}")
     app.run(debug=True, host='0.0.0.0', port=5001)
