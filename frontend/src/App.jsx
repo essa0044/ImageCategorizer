@@ -220,7 +220,7 @@ function App() {
                 </div>
 
                 {/* Right Panel: Details */}
-                <div className="col-md-2 text-3xl details-panel" onMouseMove={() => {
+                <div className="col-md-2 details-panel" onMouseMove={() => {
                     if (elementRef.current) {
                         console.log("Offset Top:", elementRef.current.offsetTop);
                     }
