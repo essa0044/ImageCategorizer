@@ -10,6 +10,8 @@ frontend/.env.test.local
 frontend/.env.production.local
 frontend/.DS_Store
 
+.env
+
 # Python / Backend
 backend/venv/
 backend/__pycache__/

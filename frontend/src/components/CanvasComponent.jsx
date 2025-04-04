@@ -72,9 +72,9 @@ const CanvasRectangle = ({ shapeProps, isSelected, onSelect, onChange, categoryC
     );
 };
 
-const CanvasComponent = ({ imageSrc, rectangles, selectedRectId, onRectSelect, onRectChange, categories }) => {
+const CanvasComponent = ({ imageSrc, rectangles, selectedRectId, onRectSelect, onRectChange, categories, stageRef }) => {
     const [image] = useImage(imageSrc, 'Anonymous'); // 'Anonymous' for CORS if image is on different domain
-    const stageRef = useRef(null);
+    // const stageRef = useRef(null);
     const [stageSize, setStageSize] = useState({ width: 800, height: 600}); // Default or calculated size
 
     // Adjust stage size based on container or image size

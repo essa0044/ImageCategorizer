@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 import UploadControls from './components/UploadControls.jsx';
 import CategoryList from './components/CategoryList';
@@ -17,6 +17,15 @@ function App() {
     const [isLoading, setIsLoading] = useState(false);
     const [classifyOnUploadFlag, setClassifyOnUploadFlag] = useState(false);
 
+    const elementRef = useRef(null);
+
+    // useEffect(() => {
+    //     if (elementRef.current) {
+    //         const rect = elementRef.current.getBoundingClientRect();
+    //         console.log(rect)
+    //     }
+    // }, [])
+
     // Fetch categories on load
     useEffect(() => {
         axios.get('/api/categories')
@@ -26,58 +35,58 @@ function App() {
 
     // Trigger Auto-Classify when image is loaded AND the flag was set
     useEffect(() => {
-      if (uploadedImage && classifyOnUploadFlag) {
-        //   handleAutoClassify(uploadedImage);
-          setClassifyOnUploadFlag(false); // Reset flag after triggering
-      }
-  }, [uploadedImage, classifyOnUploadFlag]); // dependecies: image and flag
+        if (uploadedImage && classifyOnUploadFlag) {
+            //   handleAutoClassify(uploadedImage);
+            setClassifyOnUploadFlag(false); // Reset flag after triggering
+        }
+    }, [uploadedImage, classifyOnUploadFlag]); // dependecies: image and flag
 
 
     const handleFileUpload = useCallback((file, classifyOnUpload) => {
-      setIsLoading(true);
-      setClassifyOnUploadFlag(classifyOnUpload); // Set flag for useEffect
-      const formData = new FormData();
-      formData.append('file', file);
-      // send flag to backend, if needed, even though we don't use it currently
-      formData.append('classifyOnUpload', classifyOnUpload);
+        setIsLoading(true);
+        setClassifyOnUploadFlag(classifyOnUpload); // Set flag for useEffect
+        const formData = new FormData();
+        formData.append('file', file);
+        // send flag to backend, if needed, even though we don't use it currently
+        formData.append('classifyOnUpload', classifyOnUpload);
 
-      axios.post('/api/upload', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-      })
-      .then(response => {
-          console.log('Upload response:', response.data);
-          // IMPORTANT: Use the URL returned by the backend
-          setUploadedImage(response.data.image_url); // <-- sets URL of the uploaded image
-          setRectangles([]);
-          setSelectedRectId(null);
-          setAutoClassified(false);
-          setIsLoading(false);
-          // auto-classification will be triggered in the useEffect above,
-          // if classifyOnUploadFlag and uploadedImage was set to true
-      })
-      .catch(error => {
-          console.error('Error uploading file:', error);
-          setIsLoading(false);
-          setClassifyOnUploadFlag(false); // Reset flag on error
-      });
-  }, []); // handleAutoClassify as dependency to ensure it's up-to-date
-
-
-  const handleAutoClassify = useCallback((imageUrlToClassify) => {
-    if (!imageUrlToClassify) return;
-    setIsLoading(true);
-    console.log("Triggering auto-classify for:", imageUrlToClassify); // Debug Log
-    axios.post('/api/auto-classify', { image_url: imageUrlToClassify }) // send Image-URL
-        .then(response => {
-            setRectangles(response.data.rectangles || []);
-            setAutoClassified(response.data.autoClassified || false);
-            setIsLoading(false);
+        axios.post('/api/upload', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
         })
-        .catch(error => {
-            console.error('Error during auto-classification:', error);
-            setIsLoading(false);
-        });
-  }, []); // no dependencies, as we use only use parameters
+            .then(response => {
+                console.log('Upload response:', response.data);
+                // IMPORTANT: Use the URL returned by the backend
+                setUploadedImage(response.data.image_url); // <-- sets URL of the uploaded image
+                setRectangles([]);
+                setSelectedRectId(null);
+                setAutoClassified(false);
+                setIsLoading(false);
+                // auto-classification will be triggered in the useEffect above,
+                // if classifyOnUploadFlag and uploadedImage was set to true
+            })
+            .catch(error => {
+                console.error('Error uploading file:', error);
+                setIsLoading(false);
+                setClassifyOnUploadFlag(false); // Reset flag on error
+            });
+    }, []); // handleAutoClassify as dependency to ensure it's up-to-date
+
+
+    const handleAutoClassify = useCallback((imageUrlToClassify) => {
+        if (!imageUrlToClassify) return;
+        setIsLoading(true);
+        console.log("Triggering auto-classify for:", imageUrlToClassify); // Debug Log
+        axios.post('/api/auto-classify', { image_url: imageUrlToClassify }) // send Image-URL
+            .then(response => {
+                setRectangles(response.data.rectangles || []);
+                setAutoClassified(response.data.autoClassified || false);
+                setIsLoading(false);
+            })
+            .catch(error => {
+                console.error('Error during auto-classification:', error);
+                setIsLoading(false);
+            });
+    }, []); // no dependencies, as we use only use parameters
 
     const addRectangle = useCallback((newRect) => {
         // adds rectangle (e.g. per drag-and-drop)
@@ -106,7 +115,8 @@ function App() {
 
     const changeRectangleHierarchy = useCallback((rectId, newHierarchy) => {
         updateRectangle(rectId, { hierarchy: newHierarchy });
-     }, [updateRectangle]);
+
+    }, [updateRectangle]);
 
     const handleSubmit = useCallback(() => {
         setIsLoading(true);
@@ -115,17 +125,17 @@ function App() {
             rectangles: rectangles,
         };
         axios.post('/api/submit', dataToSubmit)
-          .then(response => {
-            console.log("Submission successful:", response.data);
-            alert('Classification submitted!');
-            setIsLoading(false);
-            // Optional: Reset state or navigate away
-          })
-          .catch(error => {
-            console.error("Error submitting classification:", error);
-            alert('Submission failed!');
-            setIsLoading(false);
-          });
+            .then(response => {
+                console.log("Submission successful:", response.data);
+                alert('Classification submitted!');
+                setIsLoading(false);
+                // Optional: Reset state or navigate away
+            })
+            .catch(error => {
+                console.error("Error submitting classification:", error);
+                alert('Submission failed!');
+                setIsLoading(false);
+            });
     }, [uploadedImage, rectangles]);
 
     // --- Drag and Drop Handling ---
@@ -141,11 +151,12 @@ function App() {
         const category = JSON.parse(categoryString);
         // Get drop position relative to the stage/canvas
         // This requires access to the Konva stage reference, might need adjustments
-        const stage = e.target.getStage ? e.target.getStage() : null; // Assuming drop is on Konva stage/layer
-         if (!stage) {
-             console.warn("Could not get Konva stage from drop target");
-             return;
-         }
+        // const stage = e.target.getStage ? e.target.getStage : null; // Assuming drop is on Konva stage/layer
+        if (!elementRef.current) {
+            console.warn("Could not get Konva stage from drop target");
+            return;
+        }
+        const stage = elementRef.current
         const pos = stage.getPointerPosition();
 
         if (pos) {
@@ -167,7 +178,7 @@ function App() {
 
 
     return (
-        <div className="container-fluid mt-3">
+        <div className="container-fluid mt-3" ref={elementRef}>
             <h1>Exam Classification Tool</h1>
             <hr />
 
@@ -195,9 +206,10 @@ function App() {
 
                 {/* Center Panel: Canvas */}
                 <div className="col-md-8 canvas-panel"
-                     onDrop={handleCanvasDrop}
-                     onDragOver={handleCanvasDragOver}>
+                    onDrop={handleCanvasDrop}
+                    onDragOver={handleCanvasDragOver}>
                     <CanvasComponent
+                        stageRef={elementRef}
                         imageSrc={uploadedImage}
                         rectangles={rectangles}
                         selectedRectId={selectedRectId}
@@ -208,7 +220,11 @@ function App() {
                 </div>
 
                 {/* Right Panel: Details */}
-                <div className="col-md-2 details-panel">
+                <div className="col-md-2 text-3xl details-panel" onMouseMove={() => {
+                    if (elementRef.current) {
+                        console.log("Offset Top:", elementRef.current.offsetTop);
+                    }
+                }}>
                     {selectedRectId && getSelectedRectangle() && (
                         <DetailsPanel
                             rectangle={getSelectedRectangle()}
