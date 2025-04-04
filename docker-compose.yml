@@ -24,6 +24,9 @@ services:
       # environment variables can be loaded from .env file later
       FLASK_APP: app.py
       FLASK_DEBUG: 1 # for development
+      POSTGRES_DB: examdb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
       # DATABASE_URL: postgresql://user:password@db:5432/examdb
     restart: unless-stopped
     depends_on:

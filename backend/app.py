@@ -44,6 +44,7 @@ def get_categories():
     categories = []
     conn = get_db_connection()
     if conn is None:
+        print("Database connection failed")
         return jsonify({"error": "Database connection failed"}), 500
 
     try:
