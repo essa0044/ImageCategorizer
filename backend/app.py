@@ -136,6 +136,51 @@ def serve_image(filename):
          return jsonify({"error": "Image not found"}), 404
 
 @app.route('/api/auto-classify', methods=['POST'])
+
+# @app.route('/api/auto-classify', methods=['POST'])
+# def auto_classify():
+#     data = request.json
+#     image_url = data.get('image_url')
+
+#     image_path = os.path.join(app.config['UPLOAD_FOLDER'], os.path.basename(image_url))
+
+#     # --- LOAD AND PREPROCESS IMAGE ---
+#     import cv2
+#     img = cv2.imread(image_path)
+
+#     # --- RUN MODEL PREDICTION ---
+#     # EXAMPLE: Using YOLOv5 (assumes model is already loaded)
+#     import torch
+#     model = torch.hub.load('ultralytics/yolov5', 'custom', path='model.pt')
+#     results = model(img)
+#     detections = results.pandas().xyxy[0]  # DataFrame of detections
+
+#     rectangles = []
+#     for idx, row in detections.iterrows():
+#         x = float(row['xmin'])
+#         y = float(row['ymin'])
+#         w = float(row['xmax']) - x
+#         h = float(row['ymax']) - y
+#         category_name = row['name']
+
+#         # You’ll need a mapping from category name → categoryId
+#         category_id = YOUR_CATEGORY_MAPPING.get(category_name, None)
+
+#         rectangles.append({
+#             "id": f"auto-rect-{uuid.uuid4()}",
+#             "x": x,
+#             "y": y,
+#             "width": w,
+#             "height": h,
+#             "categoryId": category_id,
+#             "hierarchy": ""
+#         })
+
+#     return jsonify({
+#         "rectangles": rectangles,
+#         "autoClassified": True
+#     }), 200
+
 def auto_classify():
      # (Dummy implementation remains, ensure IDs are strings)
     data = request.json
